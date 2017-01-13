@@ -25,8 +25,20 @@ class AliyunSmsTest extends PHPUnit_Framework_TestCase
     {
         parent::__construct();
 
-        $config = require_once __DIR__ . '/../config/sms.php';
+        // Config.
+        $config = [
+            'default' => 'aliyun',
 
+            'providers' => [
+                'aliyun' => [
+                    'region'     => 'cn-hangzhou',
+                    'access_id'  => 'xxx',
+                    'access_key' => 'yyy',
+                ],
+            ],
+        ];
+
+        // Create manager and service.
         $manager = new SmsManager();
         $manager->config($config);
         $manager->extend('aliyun', function () use ($config) {
@@ -37,8 +49,9 @@ class AliyunSmsTest extends PHPUnit_Framework_TestCase
 
     public function testSendMessage()
     {
-        $this->smsService->send('13282819200', function (ShortMessage $message) {
-            $message->template('SMS_13190010')->signature('Aliyun')->data(['customer' => '小强']);
+        // Send short message.
+        $this->smsService->send('[186xxx]', function (ShortMessage $message) {
+            $message->template('SMS_13190010')->signature('[xxAliyun]')->data(['customer' => '小强']);
         });
     }
 }

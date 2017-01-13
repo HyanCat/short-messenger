@@ -14,8 +14,8 @@ return [
     'providers' => [
         'aliyun' => [
             'region'     => 'cn-hangzhou',
-            'access_id'  => 'xxx',
-            'access_key' => 'yyy',
+            'access_id'  => env('SMS_ACCESS_ID', ''),
+            'access_key' => env('SMS_ACCESS_KEY', ''),
         ],
     ],
 ];
