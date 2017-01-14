@@ -17,6 +17,13 @@ class SmsService
         $this->manager = $manager;
     }
 
+    public function driver($driver = null)
+    {
+        $this->manager->driver($driver);
+
+        return $this;
+    }
+
     public function send($receivers, callable $callback)
     {
         $message = new ShortMessage();

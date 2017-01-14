@@ -9,6 +9,7 @@
 namespace HyanCat\ShortMessenger;
 
 use HyanCat\ShortMessenger\Providers\AliyunProvider;
+use HyanCat\ShortMessenger\Providers\SendCloudProvider;
 use Illuminate\Support\ServiceProvider;
 
 class SmsServiceProvider extends ServiceProvider
@@ -29,11 +30,12 @@ class SmsServiceProvider extends ServiceProvider
         $this->registerManager();
         $this->registerService();
         $this->extendAliyunProvider();
+        $this->extendSendCloudProvider();
     }
 
     public function provides()
     {
-        return ['hyancat.sms'];
+        return ['hyancat.sms', 'hyancat.sms.manager'];
     }
 
     private function registerManager()
@@ -56,6 +58,13 @@ class SmsServiceProvider extends ServiceProvider
     {
         $this->app['hyancat.sms.manager']->extend('aliyun', function () {
             return new AliyunProvider($this->config['sms.providers.aliyun']);
+        });
+    }
+
+    private function extendSendCloudProvider()
+    {
+        $this->app['hyancat.sms.manager']->extend('sendcloud', function () {
+            return new SendCloudProvider($this->config['sms.providers.sendcloud']);
         });
     }
 }

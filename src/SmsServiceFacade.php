@@ -10,6 +10,11 @@ namespace HyanCat\ShortMessenger;
 
 use Illuminate\Support\Facades\Facade;
 
+/**
+ * Class SmsServiceFacade
+ * @namespace HyanCat\ShortMessenger
+ * @see SmsService
+ */
 class SmsServiceFacade extends Facade
 {
     protected static function getFacadeAccessor()

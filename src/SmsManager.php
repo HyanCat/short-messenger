@@ -18,7 +18,7 @@ class SmsManager
     /**
      * @var array
      */
-    protected $config  = [];
+    protected $config = [];
 
     public function config($config)
     {
@@ -32,6 +32,7 @@ class SmsManager
         if (! isset($this->drivers[$driver])) {
             $this->resolve($driver);
         }
+        $this->usingDriver = $driver;
         return $this->drivers[$driver];
     }
 
@@ -47,9 +48,11 @@ class SmsManager
         //
     }
 
+    private $usingDriver;
+
     public function getDefaultDriver()
     {
-        return $this->config['default'];
+        return $this->usingDriver ?: $this->config['default'];
     }
 
     /**
