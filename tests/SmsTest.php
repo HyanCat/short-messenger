@@ -23,7 +23,26 @@ abstract class SmsTest extends PHPUnit_Framework_TestCase
         parent::__construct();
 
         // Config.
-        $config = require_once __DIR__.'/../config/sms.test.php';
+        $configFile = __DIR__ . '/../config/sms.test.php';
+        if (file_exists($configFile)) {
+            $config = require_once $configFile;
+        } else {
+            $config = [
+                'default' => 'aliyun',
+
+                'providers' => [
+                    'aliyun'    => [
+                        'region'     => 'cn-hangzhou',
+                        'access_id'  => 'xxx',
+                        'access_key' => 'yyy',
+                    ],
+                    'sendcloud' => [
+                        'sms_user' => 'xxx',
+                        'sms_key'  => 'yyy',
+                    ],
+                ],
+            ];
+        }
 
         // Create manager and service.
         $manager = new SmsManager();
