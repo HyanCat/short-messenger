@@ -20,8 +20,10 @@ class SendCloudSmsTest extends SmsTest
     public function testSendMessage()
     {
         // Send short message.
+        /*
         $this->smsService->send('[186xxx]', function (ShortMessage $message) {
             $message->template('1000')->signature('[xxSendCloud]')->data(['customer' => '小强']);
         });
+        */
     }
 }

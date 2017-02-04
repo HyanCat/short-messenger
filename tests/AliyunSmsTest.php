@@ -20,8 +20,10 @@ class AliyunSmsTest extends SmsTest
     public function testSendMessage()
     {
         // Send short message.
+        /*
         $this->smsService->send('[186xxx]', function (ShortMessage $message) {
             $message->template('SMS_13190010')->signature('[xxAliyun]')->data(['customer' => '小强']);
         });
+        */
     }
 }
