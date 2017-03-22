@@ -1,5 +1,6 @@
 {
     "name": "hyancat/short-messenger",
+    "description": "PHP 短信信使，支持阿里云短信和 SendCloud 短信。",
     "type": "library",
     "license": "MIT",
     "authors": [
