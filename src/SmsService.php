@@ -33,7 +33,7 @@ class SmsService
         if (is_string($receivers)) {
             $this->manager->send($receivers, $message);
         } else {
-            $this->manager->sendBatch($receivers, $message);
+            $this->manager->sendInBulk($receivers, $message);
         }
     }
 }

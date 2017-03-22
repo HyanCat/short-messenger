@@ -16,19 +16,33 @@ use SendCloudSMS;
 
 class SendCloudProvider implements SmsProvider
 {
+    /**
+     * @var SendCloudSMS
+     */
     protected $client;
+
+    /**
+     * @var mixed
+     */
+    protected $response;
 
     public function __construct($config)
     {
         $this->client = new SendCloudSMS($config['sms_user'], $config['sms_key']);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function send($receiver, ShortMessage $message)
     {
-        return $this->sendBatch([$receiver], $message);
+        return $this->sendInBulk([$receiver], $message);
     }
 
-    public function sendBatch($receivers, ShortMessage $message)
+    /**
+     * @inheritdoc
+     */
+    public function sendInBulk($receivers, ShortMessage $message)
     {
         $msg = new \SmsMsg();
         $msg->setMsgType(\MsgType::SMS);
@@ -37,7 +51,15 @@ class SendCloudProvider implements SmsProvider
         foreach ($message->getData() as $k => $v) {
             $msg->addVars($k, $v);
         }
-        $this->client->send($msg);
+        $this->response = $this->client->send($msg);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getResponse()
+    {
+        return $this->response;
     }
 
 }

@@ -14,15 +14,28 @@ use HyanCat\ShortMessenger\ShortMessage;
 use HyanCat\ShortMessenger\SmsException;
 use Sms\Request\V20160927 as SMS;
 
+/**
+ * Aliyun SMS provider.
+ * Class AliyunProvider
+ * @namespace HyanCat\ShortMessenger\Providers
+ */
 class AliyunProvider implements SmsProvider
 {
-    protected $request;
-
     /**
      * SMS ACS Client Instance.
      * @var \DefaultAcsClient
      */
     protected $client;
+
+    /**
+     * @var SMS\SingleSendSmsRequest
+     */
+    protected $request;
+
+    /**
+     * @var mixed
+     */
+    protected $response;
 
     public function __construct($config)
     {
@@ -31,6 +44,9 @@ class AliyunProvider implements SmsProvider
         $this->request = new SMS\SingleSendSmsRequest();
     }
 
+    /**
+     * @inheritdoc
+     */
     public function send($receiver, ShortMessage $message)
     {
         $this->request->setSignName($message->getSignature());
@@ -38,17 +54,27 @@ class AliyunProvider implements SmsProvider
         $this->request->setRecNum($receiver);
         $this->request->setParamString(json_encode($message->getData()));
         try {
-            $response = $this->client->getAcsResponse($this->request);
-            print_r($response);
+            $this->response = $this->client->getAcsResponse($this->request);
         } catch (\ClientException $e) {
             throw new SmsException($e->getErrorMessage(), -1);
         }
     }
 
-    public function sendBatch($receivers, ShortMessage $message)
+    /**
+     * @inheritdoc
+     */
+    public function sendInBulk($receivers, ShortMessage $message)
     {
         foreach ($receivers as $receiver) {
             $this->send($receiver, $message);
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getResponse()
+    {
+        return $this->response;
     }
 }
