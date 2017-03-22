@@ -21,8 +21,93 @@ PHP 短信组件包，支持阿里云短信和 SendCloud 短信。
 
 ## Usage
 
+### Generally
 
+1. 配置
 
+    ```php
+    $config = [
+        'default' => 'aliyun',
+
+        'providers' => [
+            'aliyun'    => [
+                'region'     => 'cn-hangzhou',
+                'access_id'  => 'xxx',
+                'access_key' => 'yyy',
+            ],
+            'sendcloud' => [
+                'sms_user' => 'xxx',
+                'sms_key'  => 'yyy',
+            ],
+        ],
+    ];
+    ```
+2. 代码示例
+
+    ```php
+    // 配置驱动
+    $manager = new SmsManager();
+    $manager->config($config);
+    $manager->extend('aliyun', function () use ($config) {
+        return new AliyunProvider($config['providers']['aliyun']);
+    });
+    $manager->extend('sendcloud', function () use ($config) {
+        return new SendCloudProvider($config['providers']['sendcloud']);
+    });
+    // 创建 Service
+    $smsService = new SmsService($manager);
+    $smsService->send('186xxx', function (ShortMessage $message) {
+        $message->template('template_123')
+                ->signature('SIGNATURE_xx')
+                ->data(['code' => 1234]);
+    });
+    ```
+
+### Laravel or Lumen
+
+1. 添加 ServiceProvider
+
+    ```php
+    HyanCat\ShortMessenger\SmsServiceProvider::class
+    ```
+
+2. 配置 sms.php
+
+    ```php
+    [
+        'default' => 'aliyun',
+
+        'providers' => [
+
+            'aliyun' => [
+                'region'     => 'cn-hangzhou',
+                'access_id'  => env('ALIYUN_SMS_ACCESS_ID', ''),
+                'access_key' => env('ALIYUN_SMS_ACCESS_KEY', ''),
+            ],
+
+            'sendcloud' => [
+                'sms_user' => env('SENDCLOUD_SMS_USER', ''),
+                'sms_key'  => env('SENDCLOUD_SMS_KEY', ''),
+            ],
+        ]
+    ]
+    ```
+
+    在 Laravel 框架下可以使用 artisan 命令创建：
+
+        php artisan vendor:publish --provider=HyanCat\ShortMessenger\SmsServiceProvider
+
+3. 代码示例
+
+    ```php
+    use HyanCat\ShortMessenger\SmsServiceFacade as SMS;
+
+    SMS::send('18688888888', function (ShortMessage $message) {
+        $message->template('template_123')
+                ->signature('SIGNATURE_xx')
+                ->data(['code' => 1234]);
+    });
+    ```
 
 ## License
 
