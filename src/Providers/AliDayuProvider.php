@@ -6,21 +6,16 @@
  *
  * Copyright (C) HyanCat. All rights reserved.
  */
+
 namespace HyanCat\ShortMessenger\Providers;
 
-require_once __DIR__ . '/../../libs/aliyun-php-sdk-sms/aliyun-php-sdk-core/Config.php';
-require_once __DIR__ .'/../../libs/aliyun-php-sdk-sms/aliyun-php-sdk-sms/Sms/Request/V20160927/SingleSendSmsRequest.php';
-
+require_once __DIR__ . '/../../libs/aliyun-php-sdk-sms/Dysmsapi/Request/V20170525/SendSmsRequest.php';
+require_once __DIR__ . '/../../libs/aliyun-php-sdk-sms/Dysmsapi/Request/V20170525/QuerySendDetailsRequest.php';
 use HyanCat\ShortMessenger\ShortMessage;
 use HyanCat\ShortMessenger\SmsException;
-use Sms\Request\V20160927 as SMS;
+use Dysmsapi\Request\V20170525 as SMS;
 
-/**
- * Aliyun SMS provider.
- * Class AliyunProvider
- * @namespace HyanCat\ShortMessenger\Providers
- */
-class AliyunProvider implements SmsProvider
+class AliDayuProvider implements SmsProvider
 {
     /**
      * SMS ACS Client Instance.
@@ -29,7 +24,7 @@ class AliyunProvider implements SmsProvider
     protected $client;
 
     /**
-     * @var SMS\SingleSendSmsRequest
+     * @var SMS\SendSmsRequest
      */
     protected $request;
 
@@ -41,8 +36,9 @@ class AliyunProvider implements SmsProvider
     public function __construct($config)
     {
         $clientProfile = \DefaultProfile::getProfile($config['region'], $config['access_id'], $config['access_key']);
+        \DefaultProfile::addEndpoint('cn-hangzhou', 'cn-hangzhou', 'Dysmsapi', 'dysmsapi.aliyuncs.com');
         $this->client  = new \DefaultAcsClient($clientProfile);
-        $this->request = new SMS\SingleSendSmsRequest();
+        $this->request = new SMS\SendSmsRequest();
     }
 
     /**
@@ -52,8 +48,8 @@ class AliyunProvider implements SmsProvider
     {
         $this->request->setSignName($message->getSignature());
         $this->request->setTemplateCode($message->getTemplate());
-        $this->request->setRecNum($receiver);
-        $this->request->setParamString(json_encode($message->getData()));
+        $this->request->setPhoneNumbers($receiver);
+        $this->request->setTemplateParam(json_encode($message->getData()));
         try {
             $this->response = $this->client->getAcsResponse($this->request);
         } catch (\ClientException $e) {

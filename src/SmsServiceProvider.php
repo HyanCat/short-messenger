@@ -6,8 +6,10 @@
  *
  * Copyright (C) HyanCat. All rights reserved.
  */
+
 namespace HyanCat\ShortMessenger;
 
+use HyanCat\ShortMessenger\Providers\AliDayuProvider;
 use HyanCat\ShortMessenger\Providers\AliyunProvider;
 use HyanCat\ShortMessenger\Providers\SendCloudProvider;
 use Illuminate\Support\ServiceProvider;
@@ -31,6 +33,7 @@ class SmsServiceProvider extends ServiceProvider
         $this->registerService();
         $this->extendAliyunProvider();
         $this->extendSendCloudProvider();
+        $this->extendAliDayuProvider();
     }
 
     public function provides()
@@ -43,6 +46,7 @@ class SmsServiceProvider extends ServiceProvider
         $this->app->singleton('hyancat.sms.manager', function ($app) {
             $manager = new SmsManager();
             $manager->config($this->config['sms']);
+
             return $manager;
         });
     }
@@ -65,6 +69,13 @@ class SmsServiceProvider extends ServiceProvider
     {
         $this->app['hyancat.sms.manager']->extend('sendcloud', function () {
             return new SendCloudProvider($this->config['sms.providers.sendcloud']);
+        });
+    }
+
+    private function extendAliDayuProvider()
+    {
+        $this->app['hyancat.sms.manager']->extend('alidayu', function () {
+            return new AliDayuProvider($this->config['sms.providers.alidayu']);
         });
     }
 }

@@ -19,8 +19,8 @@
  */
 class HttpHelper
 {
-	public static $connectTimeout = 30000;//30 second
-	public static $readTimeout = 80000;//80 second
+	public static $connectTimeout = 30;//30 second
+	public static $readTimeout = 80;//80 second
 	
 	public static function curl($url, $httpMethod = "GET", $postFields = null,$headers = null)
 	{
@@ -58,7 +58,7 @@ class HttpHelper
 		$httpResponse->setStatus(curl_getinfo($ch, CURLINFO_HTTP_CODE));
 		if (curl_errno($ch))
 		{
-			throw new ClientException("Speicified endpoint or uri is not valid.", "SDK.ServerUnreachable");
+			throw new ClientException("Server unreachable: Errno: " . curl_errno($ch) . " " . curl_error($ch), "SDK.ServerUnreachable");
 		}
 		curl_close($ch);
 		return $httpResponse;
